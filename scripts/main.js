@@ -3,15 +3,24 @@ var Computer = new Paddle(800,100);
 var ball = new Ball(450,255,5,0,"#0000ff");
 var topPressed = false;
 var bottomPressed = false;
+var playerScore = 0;
+var computerScore = 0;
 
 function init(){
   step();
+  resetScore();
 }
 
 function step(){
   var canvasContent = getCanvasContent();
   canvasContent.clearRect(0, 0, "900", "510");
   draw();
+}
+
+function resetScore(){
+  playerScore = 0;
+  computerScore = 0;
+  updateScore();
 }
 
 function getCanvasContent(){
@@ -28,6 +37,12 @@ function draw(){
   ball.render(canvasContent);
   ball.move();
   Computer.update();
+}
+
+function updateScore(){
+  var playerScoreHolder = document.getElementsByClassName("playerScore")[0].innerHTML = playerScore;
+  var computerScoreHolder = document.getElementsByClassName("computerScore")[0].innerHTML = computerScore;
+
 }
 
 function getCanvas(){
@@ -64,11 +79,17 @@ function Ball(x,y,x_speed,y_speed,color){
      this.y_speed = -this.y_speed;
    }
 
-   if(this.x < 0 || this.x > 900) { // a point was scored
+   if(this.x < 0 || this.x > 900) {
+     if(this.x < 0){
+       computerScore += 1;
+     } else {
+       playerScore += 1;
+     }
      this.x_speed = -5;
      this.y_speed = 0;
      this.x = 450;
      this.y = 255;
+    updateScore();
    }
    if(this.x < 75) {
      if(top_y < (Player.y + Player.height) && bottom_y > Player.y && top_x < (Player.x + Player.width) && bottom_x > Player.x) {
