@@ -27,6 +27,7 @@ function draw(){
   Computer.render(canvasContent);
   ball.render(canvasContent);
   ball.move();
+  Computer.update();
 }
 
 function getCanvas(){
@@ -55,12 +56,12 @@ function Ball(x,y,x_speed,y_speed,color){
    var bottom_x = this.x + 5;
    var bottom_y = this.y + 5;
 
-   if(this.y - 5 < 0) { // hitting the left wall
-     this.x = 5;
-     this.x_speed = -this.x_speed;
-   } else if(this.y + 5 > 510) { // hitting the right wall
-     this.x = 395;
-     this.x_speed = -this.x_speed;
+   if(this.y - 5 < 0) {
+     this.y = 5;
+     this.y_speed = -this.y_speed;
+   } else if(this.y + 5 > 510) {
+     this.y = 505;
+     this.y_speed = -this.y_speed;
    }
 
    if(this.x < 0 || this.x > 900) { // a point was scored
@@ -74,13 +75,17 @@ function Ball(x,y,x_speed,y_speed,color){
        // hit the player's paddle
        this.x_speed = 1;
        this.x_speed += (Player.x_speed / 2);
-       this.x += this.x_speed;
+       this.y_speed += (Player.y_speed / 2);
+       this.x += this.x_speed + 5;
+      this.y += this.y_speed;
   }
    } else {
      if(top_y < (Computer.y + Computer.height) && bottom_y > Computer.y && top_x < (Computer.x + Computer.width) && bottom_x > Computer.x) {
        // hit the computer's paddle
-       this.y_speed = 3;
-       this.x_speed += (Computer.x_speed / 2);
+       this.x_speed = -5;
+       this.x_speed -= (Computer.x_speed / 2);
+       this.y_speed -= (Computer.y_speed/2)
+       this.x += this.x_speed - 10;
        this.y += this.y_speed;
      }
    }
@@ -91,6 +96,7 @@ function Paddle(x,y){
   this.x = x;
   this.y = y;
   this.x_speed = 5;
+  this.y_speed = 3;
   this.width = 30;
   this.height = 100;
   this.render = function(canvasContent){
@@ -110,12 +116,28 @@ function Paddle(x,y){
       this.y -= 12;
     }
     if(this.y > 3 && this.y < 409){
-      step();
+      //step();
     }
 
   }
 
 }
+
+Computer.update = function () {
+    var x_pos = ball.x;
+    var diff = -((this.x + (this.width / 2)) - x_pos);
+    if (diff < 0 && diff < -4) {
+        diff = -5;
+    } else if (diff > 0 && diff > 4) {
+        diff = 5;
+    }
+    this.move();
+    if (this.y < 0) {
+        this.y = 0;
+    } else if (this.y + this.width > 400) {
+        this.y = 400 - this.width;
+    }
+};
 
 function keyDownHandler(e) {
     if(e.keyCode == 38) {
