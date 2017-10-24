@@ -5,6 +5,8 @@ var topPressed = false;
 var bottomPressed = false;
 var playerScore = 0;
 var computerScore = 0;
+var winningPoint = 11;
+var gameEnded = false;
 
 function init(){
   step();
@@ -42,6 +44,14 @@ function draw(){
 function updateScore(){
   var playerScoreHolder = document.getElementsByClassName("playerScore")[0].innerHTML = playerScore;
   var computerScoreHolder = document.getElementsByClassName("computerScore")[0].innerHTML = computerScore;
+  if(playerScore == winningPoint || computerScore == winningPoint){
+    var winner = playerScore == winningPoint? "Player"  : "Computer" ;
+    document.getElementById("results").innerHTML = winner + " is the winner. Refresh to play again";
+    resetScore();
+    gameEnded = true;
+    var canvasContent = getCanvasContent();
+    canvasContent.clearRect(0, 0, "900", "510");
+  }
 
 }
 
@@ -179,6 +189,12 @@ function keyUpHandler(e) {
   }
 }
 
-setInterval(step, 25);
+  setInterval(gameCheck, 25);
+
+function gameCheck(){
+  if (!gameEnded){
+    step();
+  }
+}
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
